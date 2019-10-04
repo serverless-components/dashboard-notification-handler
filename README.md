@@ -1,27 +1,88 @@
-# ⚡📲 Serverless Pushover
+# serverless-notification-handler
 
-A Serverless project that forwards SNS notifications from
-[Serverless Dashboard](https://dashboard.serverless.com)
-to [Pushover](https://pushover.net).
+&nbsp;
 
-![Screenshots of a push notification and detail in Pushover](./screenshots.png)
+Easily deploy a Python handler for handling Serverless Insight Alert Notifications.
+
+&nbsp;
+
+1. [Install](#1-install)
+2. [Create](#2-create)
+3. [Configure](#3-configure)
+4. [Deploy](#4-deploy)
+
+&nbsp;
 
 
-## Setup instructions
-1. Clone this repo & `cd` into it
-   ```shell
-   git clone https://github.com/dschep/serverless-pushover
-   cd serverless-pushover
-   ```
-1. Install the serverless framework
-   ```shell
-   npm i -g serverless
-   ```
-1. Create a new application on pushover by clicking [this link](https://pushover.net/apps/build)
-1. Deploy! Replace `<USER>` and `<APP>` with your Pushover user key and the
-   key/token for the app you just created respectively.
-   ```shell
-   PUSHOVER_USER_KEY=<USER> PUSHOVER_APP_KEY=<APP> serverless
-   ```
-1. Paste the ARN output in the previous step into the
-   configuration on [dashboard.serverless.com](https://dashboard.serverless.com)
+### 1. Install
+
+```console
+$ npm install -g serverless
+```
+
+### 2. Create
+
+```console
+$ mkdir notification-forwarder && cd notification-forwarder
+```
+
+The directory should look something like this:
+
+
+```
+|- handler.py
+|- serverless.yml
+|- .env         # your AWS api keys
+```
+
+the `.env` file should look like this
+
+```
+AWS_ACCESS_KEY_ID=XXX
+AWS_SECRET_ACCESS_KEY=XXX
+```
+
+The `handler.py` file should contain a function to handle an alert notification event from
+Serverless Insights.
+
+```python
+def alert(notification):
+    print('got notification', notification)
+```
+
+### 3. Configure
+
+Configure your `serverless.yml` as follows:
+
+```yml
+# serverless.yml
+
+name: notification-handler
+stage: dev
+
+notificationHandler:
+  component: './serverless-notification-handler'
+  inputs:
+    code: .
+    handler: handler.alert
+    env:
+      FOOBAR: ${env.FOOBAR} # Optional, set any env vars for your code
+```
+
+### 4. Deploy
+
+```console
+$ serverless
+```
+
+### 5. Configure the Serverless Dashboard
+
+Paste the ARN printed in the output of the previous step into the SNS notification configuration on
+dashboard.serverless.com for your app.
+
+&nbsp;
+
+### New to Components?
+
+Checkout the [Serverless Components](https://github.com/serverless/components) repo for more information.
+
