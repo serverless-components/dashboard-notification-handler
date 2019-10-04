@@ -20,7 +20,7 @@ def get_user_handler(user_handler_value):
     return getattr(user_module, user_handler_name)
 
 
-user_handler = get_user_handler(os.environ['USER_HANDLER'])
+user_handler = get_user_handler(os.environ["USER_HANDLER"])
 
 
 def sns(event, context):

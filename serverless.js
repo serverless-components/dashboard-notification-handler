@@ -2,12 +2,16 @@ const path = require("path");
 const { Component } = require("@serverless/core");
 
 class ServerlessNotificationHandler extends Component {
-  async default({ code, handler, env } = {}) {
+  async default({ code, handler, env, runtime = "nodejs10.x" } = {}) {
     const snsTopic = await this.load("@serverless/aws-sns-topic");
     const snsSubscription = await this.load("@serverless/aws-sns-subscription");
     const lambda = await this.load("@serverless/aws-lambda");
 
     this.context.status(`Deploying Serverless Dashboard Notification handler`);
+
+    assert(runtime.startsWith("nodejs") || runtime.startsWith("python"));
+
+    let shim = runtime.startsWith("nodejs") ? "shim.js" : "shim.py";
 
     const [snsTopicOutputs, lambdaOutputs] = await Promise.all([
       snsTopic({
@@ -35,8 +39,8 @@ class ServerlessNotificationHandler extends Component {
           USER_HANDLER: handler
         },
         handler: "shim.sns",
-        shims: [path.join(__dirname, "shim.py")],
-        runtime: "python3.7",
+        shims: [path.join(__dirname, shim)],
+        runtime,
         description:
           "Lambda for processing alerts from the Serverless Dashboard"
       })
