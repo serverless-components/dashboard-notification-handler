@@ -1,5 +1,5 @@
 {
-  "name": "serverless-notification-handler",
+  "name": "@serverless/dashboard-notification-handler",
   "version": "1.0.0",
   "description": "A Serverless Component to facilitate handling of Serverless Insight Alert Notifications",
   "main": "serverless.js",

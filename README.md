@@ -2,7 +2,7 @@
 
 &nbsp;
 
-Easily deploy a Python handler for handling Serverless Insight Alert Notifications.
+Easily deploy a NodeJS or Python function for handling Serverless Insight Alert Notifications.
 
 &nbsp;
 
@@ -30,7 +30,7 @@ The directory should look something like this:
 
 
 ```
-|- handler.py
+|- handler.js # OR handler.py
 |- serverless.yml
 |- .env         # your AWS api keys
 ```
@@ -42,8 +42,14 @@ AWS_ACCESS_KEY_ID=XXX
 AWS_SECRET_ACCESS_KEY=XXX
 ```
 
-The `handler.py` file should contain a function to handle an alert notification event from
+The `handler.js` or `handler.py` file should contain a function to handle an alert notification event from
 Serverless Insights.
+
+```python
+module.exports.alert = (notification) => {
+  console.log('got notification', notification);
+}
+```
 
 ```python
 def alert(notification):
@@ -61,7 +67,7 @@ name: notification-handler
 stage: dev
 
 notificationHandler:
-  component: './serverless-notification-handler'
+  component: '@serverless/notification-handler'
   inputs:
     code: .
     handler: handler.alert
